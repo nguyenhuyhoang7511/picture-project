@@ -1,0 +1,44 @@
+version: '3.8'
+
+services:
+   api:
+      tty: true
+      stdin_open: true
+      build:
+         context: '.'
+         dockerfile: ./docker/Dockerfile
+      volumes:
+         - ./docker/scripts:/scripts
+         - ./storage/app/public/downloads:/var/www/html/storage/app/public/downloads
+      restart: always
+
+   cron:
+      tty: true
+      stdin_open: true
+      build:
+         context: '.'
+         dockerfile: ./docker/cron.Dockerfile
+      volumes:
+         - ./docker/scripts:/scripts
+         - ./storage/app/public/downloads:/var/www/html/storage/app/public/downloads
+      depends_on:
+         - api
+      devices:
+         - '/dev/snd:/dev/snd'
+      privileged: true
+      restart: always
+
+   nginx:
+      build:
+         context: '.'
+         dockerfile: ./docker/nginx.Dockerfile
+      ports:
+         - '80:80'
+      restart: always
+
+   redis:
+      image: redis:4.0
+      container_name: app_redis
+      ports:
+         - '6379:6379'
+      restart: always

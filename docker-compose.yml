@@ -1,0 +1,71 @@
+version: '3.8'
+
+services:
+   api:
+      tty: true
+      stdin_open: true
+      build:
+         context: '.'
+         dockerfile: ./docker/Dockerfile
+         target: base
+      command: /scripts/entrypoint.sh
+      volumes:
+         - .:/var/www/html
+         - ./docker/scripts:/scripts
+      depends_on:
+         - mysql
+      ports:
+         - '8000:8000'
+
+   cron:
+      tty: true
+      stdin_open: true
+      build:
+         context: '.'
+         dockerfile: ./docker/cron.Dockerfile
+         target: base
+      command: /scripts/cron-entrypoint.sh
+      volumes:
+         - .:/var/www/html
+         - ./docker/scripts:/scripts
+      depends_on:
+         - api
+      ports:
+         - '8001:8000'
+      devices:
+         - '/dev/snd:/dev/snd'
+      privileged: true
+
+   mysql:
+      image: mysql:5.7
+      environment:
+         MYSQL_ROOT_PASSWORD: root
+         MYSQL_USER: dbuser
+         MYSQL_PASSWORD: dbpass
+         MYSQL_DATABASE: picture-shop
+      volumes:
+         - mysql:/var/lib/mysql
+      command: mysqld --innodb_use_native_aio=0
+      ports:
+         - '3306:3306'
+      healthcheck:
+         test: ['CMD', 'mysqladmin', 'ping', '-proot']
+         interval: 1m30s
+         timeout: 10s
+         retries: 3
+         start_period: 10s
+   phpmyadmin:
+      image: phpmyadmin/phpmyadmin
+      ports:
+         - 8088:80
+      environment:
+         PMA_HOST: mysql
+         PMA_USER: root
+         PMA_PASSWORD: root
+   redis:
+      image: redis:4.0
+      container_name: app_redis
+      ports:
+         - '6379:6379'
+volumes:
+   mysql:
