@@ -11,7 +11,19 @@ class Product extends Model
     use HasFactory;
     protected $table = 'products';
 
-    protected $primaryKey = 'id';
+    /**
+     * The attributes that are mass assignable.
+     *
+     * @var array<int, string>
+     */
+    protected $fillable = [
+        'title',
+        'price',
+        'sale',
+        'quantity',
+        'description',
+        'image_id',
+    ];
 
     protected $attributes = [
         'title' => 'string',
@@ -19,6 +31,6 @@ class Product extends Model
         'sale' => 'integer',
         'quantity' => 'integer',
         'description' => 'string',
-        'image_id	' => 'string',
+        'image_id	' => 'number',
     ];
 }
