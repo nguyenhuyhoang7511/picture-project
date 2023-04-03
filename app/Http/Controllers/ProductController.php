@@ -3,54 +3,43 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\ProductRequest;
+use App\Http\Resources\ProductResource;
+use App\Models\Comment;
 use App\Models\Product;
 use Illuminate\Http\Request;
 
 class ProductController extends BaseController
 {
 
-    public function createProduct(Request $request){
-        // $product = new Product([
-        //     'title' => $request->get('title'),
-        //     'price' => $request->get('price'),
-        //     'sale' => $request->get('sale'),
-        //     'quantity' => $request->get('quantity'),
-        //     'description' => $request->get('description'),
-        //     'image_id' => $request->get('image_id'),
-        // ]);
-        // $product->save();
-
-        $request->validate([
-            'title' => 'require|string|max:150',
-            'price' => 'require|integer',
-            'sale' => 'require|integer',
-            'quantity' => 'require',
-            'description' => 'require|string|max:150',
-            'image_id' => 'require|integer',
-        ]);
+    public function createProduct(ProductRequest $request){
+    
         $data =  [
                 'title' => $request->title,
                 'price' => $request->price,
                 'sale' => $request->sale,
                 'quantity' => $request->quantity,
                 'description' => $request->description,
-                'image_id' => $request->image_id,
         ];
 
         $product = Product::create($data);
-        return $this->sendResponse($product, 'Add product success');        
- 
+        return $this->sendResponse(new ProductResource($product), 'Add product success');        
     }
     public function getAllProduct()
     {
-
+        $products = Product::all();
+        return $this->sendResponse($products, 'GET products success');        
     }
-    public function getProductDetail()
+    public function getProductDetail($id)
     {
-
+        $Product = Product::find($id);
+        return $this->sendResponse($Product, 'GET products success');        
     }
-    public function removeProduct()
+    public function removeProduct($id)
     {
-        
+        $removeItem = Product::find($id)->delete();
+        return $this->sendResponse($removeItem, 'Remove product success');        
     }
+
+
+
 }

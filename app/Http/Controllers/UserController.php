@@ -20,11 +20,16 @@ class UserController extends BaseController
         $data = User::where('id',$id)->update([
             'status' => User::USER_BLOCK
         ]);
-        return $this->sendResponse($data, 'Block user success success');        
+        return $this->sendResponse($data, 'Block user success ');        
     }
     public function removeUser($id)
     {
         $data = User::find($id)->delete();
-        return $this->sendResponse($data, 'Remove user success success');        
+        return $this->sendResponse($data, 'Remove user success ');        
+    }
+    public function profile()
+    {
+        $profile = User::where('id',auth()->user()->id)->get();
+        return $this->sendResponse($profile, 'get profile for user');        
     }
 }

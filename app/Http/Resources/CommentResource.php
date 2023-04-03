@@ -4,7 +4,7 @@ namespace App\Http\Resources;
 
 use Illuminate\Http\Resources\Json\JsonResource;
 
-class ProductResource extends JsonResource
+class CommentResource extends JsonResource
 {
     /**
      * Transform the resource into an array.
@@ -14,13 +14,13 @@ class ProductResource extends JsonResource
      */
     public function toArray($request)
     {
-        return
-        [
-            'title' => $this->title,   
-            'price' => $this->price,   
-            'sale' => $this->sale,
-            'quantity' => $this->quantity,
-            'description' => $this->description,
-        ];
+        return 
+            [
+                'content' => $this->content,   
+                'user_id' => $this->user_id,
+                'product_id' => $this->product_id,
+                'note' => "User_id & product_id will be change"
+            ];
+        
     }
 }
