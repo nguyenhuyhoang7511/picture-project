@@ -7,6 +7,10 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use App\Mail\SendEmailRegister;
+use Illuminate\Support\Facades\Mail;
+use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Redirect;
 
 
 class AuthController extends BaseController
@@ -14,6 +18,7 @@ class AuthController extends BaseController
     public function register(Request $request)
     {
         try {
+            $verifyNumber =  rand(10, 100);
             $request->validate(
                 [
                     "name" => "required|max:50",
@@ -27,11 +32,28 @@ class AuthController extends BaseController
                 "name" => $request->name,
                 "email" => $request->email,
                 "password" => bcrypt($request->password),
+                "verify_number" => $verifyNumber,
             ]);
 
-            $token = $newUser->createToken(env('APP_NAME'))->plainTextToken;
 
-            return $this->sendResponse($token, "Register success");
+            // try {
+            //     $data = ['message' => 'This is a test!'];
+            //     Mail::to('hoangit230821@gmail.com')->send(new SendEmailRegister($data));
+            //     return response()->json(['Send email modify success']);
+            // } catch (\Throwable $e) {
+            //     return response()->json(['Send email modify fail']);
+            // }
+
+            if ($newUser) {
+                // return redirect()->action([UserController::class, 'index']);
+                // return redirect()->action('UserController@verifyUser', ['userTableData' => 1]);
+                // return Redirect::route([UserController::class, 'verifyUser'])->with(['data' => [1, 2, 3, 4, 5]]);
+                return redirect()->action('UserController@index');
+            }
+
+
+            // $token = $newUser->createToken(env('APP_NAME'))->plainTextToken;
+            // return $this->sendResponse($token, "Register success");
         } catch (\Throwable $err) {
             return $this->sendError($err->getMessage(), 500);
         }

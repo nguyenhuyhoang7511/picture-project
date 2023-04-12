@@ -7,6 +7,7 @@
     <title>Document</title>
 </head>
 <body>
-    <h1>WELCOM</h1>
+    <h2>Test Email</h2>
+    <p>{{ $test_message }}</p>
 </body>
 </html>
